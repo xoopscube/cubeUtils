@@ -16,9 +16,9 @@
 
 class CubeUtils_AutoLoginHack extends XCube_ActionFilter
 {
-    var $mCookiePath;
-    var $mRememberMe = 0;
-    var $mLifeTime;
+    public $mCookiePath;
+    public $mRememberMe = 0;
+    public $mLifeTime;
 
     function preBlockFilter()
     {
@@ -28,7 +28,7 @@ class CubeUtils_AutoLoginHack extends XCube_ActionFilter
         $moduleConfigCubeUtils =& $config_handler->getConfigsByDirname('cubeUtils');
 
         if ($moduleConfigCubeUtils['cubeUtils_use_autologin']){
-        
+
             //Define custom delegate functions for AutoLogin.
             $root->mDelegateManager->add('Legacy_Controller.SetupUser', array(&$this, 'setupUser'), XCUBE_DELEGATE_PRIORITY_FINAL-1);
             $root->mDelegateManager->add('Site.CheckLogin.Success', array(&$this, 'CheckLoginSuccess'), XCUBE_DELEGATE_PRIORITY_NORMAL-1);
@@ -36,8 +36,12 @@ class CubeUtils_AutoLoginHack extends XCube_ActionFilter
             $root->mDelegateManager->add('Legacypage.User.Access',  array(&$this, 'AccessToUser'), XCUBE_DELEGATE_PRIORITY_NORMAL-1);
 
             $this->mCookiePath = defined('XOOPS_COOKIE_PATH') ? XOOPS_COOKIE_PATH : preg_replace( '?http://[^/]+(/.*)$?' , '$1' , XOOPS_URL ) ;
-            if( $this->mCookiePath == XOOPS_URL ) $this->mCookiePath = '/' ;
-            if( substr( $this->mCookiePath , -1 ) != '/' ) $this->mCookiePath .= '/' ;
+            if( $this->mCookiePath == XOOPS_URL ) {
+                $this->mCookiePath = '/';
+            }
+            if( substr( $this->mCookiePath , -1 ) !== '/' ) {
+                $this->mCookiePath .= '/';
+            }
 
             $this->mLifeTime = $moduleConfigCubeUtils['cubeUtils_login_lifetime'] * 3600;
 
@@ -47,7 +51,9 @@ class CubeUtils_AutoLoginHack extends XCube_ActionFilter
 
     /**
      * Custom 'mSetupUser' Delegate functions for AutoLogin
-     *
+     * @param $principal
+     * @param $controller
+     * @param $context
      */
     function setupUser(&$principal, &$controller, &$context) {
         if (is_object($context->mXoopsUser)) {
@@ -60,7 +66,7 @@ class CubeUtils_AutoLoginHack extends XCube_ActionFilter
             if (is_object($xoopsUser) && $xoopsUser->getVar('level') > 0) {
                 $root =& XCube_Root::getSingleton();
                 $context->mXoopsUser =& $xoopsUser;
-                // Regist to session
+                // Register to session
                 $root->mSession->regenerate();
                 $_SESSION['xoopsUserId'] = $xoopsUser->getVar('uid');
                 $_SESSION['xoopsUserGroups'] = $xoopsUser->getGroups();
@@ -72,19 +78,19 @@ class CubeUtils_AutoLoginHack extends XCube_ActionFilter
                 if ($context->mXoopsUser->isAdmin(-1)) {
                     $roles[] = "Site.Administrator";
                 }
-                if (in_array(XOOPS_GROUP_ADMIN, $_SESSION['xoopsUserGroups'])) {
+                if (in_array(XOOPS_GROUP_ADMIN, $_SESSION['xoopsUserGroups'], true)) {
                     $roles[] = "Site.Owner";
                 }
 
                 $identity = new Legacy_Identity($context->mXoopsUser);
                 $principal = new Legacy_GenericPrincipal($identity, $roles);
-        
+
                 //
                 // Use 'mysession'
                 //
                 $xoopsConfig = $root->mContext->mXoopsConfig;
-        
-                if ($xoopsConfig['use_mysession'] && $xoopsConfig['session_name'] != '') {
+
+                if ($xoopsConfig['use_mysession'] && $xoopsConfig['session_name'] !== '') {
                     setcookie($xoopsConfig['session_name'], session_id(), time() + (60 * $xoopsConfig['session_expire']), '/', '', 0);
                 }
                 // Raise Site.CheckLogin.Success event
@@ -92,7 +98,9 @@ class CubeUtils_AutoLoginHack extends XCube_ActionFilter
             } else { //Invalid AutoLogin
                 setcookie('autologin_uname', '', time() - 3600, $this->mCookiePath, '', 0);
                 setcookie('autologin_pass', '', time() - 3600, $this->mCookiePath, '', 0);
-                if (is_object($xoopsUser)) $xoopsUser = false;
+                if (is_object($xoopsUser)) {
+                    $xoopsUser = false;
+                }
             }
         }
     }
@@ -101,14 +109,14 @@ class CubeUtils_AutoLoginHack extends XCube_ActionFilter
         $root =& XCube_Root::getSingleton();
         $controller = $root->mController;
         //Check Cookies for AutoLogin
-        if(isset($_COOKIE['autologin_uname']) && isset($_COOKIE['autologin_pass'])) {
+        if(isset($_COOKIE['autologin_uname'], $_COOKIE['autologin_pass'])) {
             //Forwarding to confirmation sequence, if request with POST or GET paramaters.
             $confirm_url = '/user.php';
             if(!empty( $_POST)) {
                 $_SESSION['AUTOLOGIN_POST'] = $_POST ;
                 $_SESSION['AUTOLOGIN_REQUEST_URI'] = $_SERVER['REQUEST_URI'] ;
                 $controller->executeForward(XOOPS_URL.$confirm_url.'?op=confirm');
-            } else if(!empty($_SERVER['QUERY_STRING']) && substr($_SERVER['SCRIPT_NAME'], -strlen($confirm_url)) != $confirm_url) {
+            } else if(!empty($_SERVER['QUERY_STRING']) && substr($_SERVER['SCRIPT_NAME'], -strlen($confirm_url)) !== $confirm_url) {
                 $_SESSION['AUTOLOGIN_REQUEST_URI'] = $_SERVER['REQUEST_URI'] ;
                 $controller->executeForward(XOOPS_URL.$confirm_url.'?op=confirm');
             }
@@ -121,14 +129,14 @@ class CubeUtils_AutoLoginHack extends XCube_ActionFilter
             $criteria = new CriteriaCompo(new Criteria('uname', addslashes($uname)));
             $user_handler =& xoops_gethandler('user');
             $users =& $user_handler->getObjects($criteria, false);
-            if( empty( $users ) || count( $users ) != 1 ) {
+            if( empty( $users ) || count( $users ) !== 1 ) {
                 $xoopsUser = null ;
             } else {
                 $xoopsUser = $users[0];
                 //Check Cookie LifeTime;
                 $old_limit = time() - $this->mLifeTime ;
-                list( $old_Ynj , $old_encpass ) = explode( ':' , $pass ) ;
-                if( strtotime( $old_Ynj ) < $old_limit || md5( $xoopsUser->getVar('pass') . $old_Ynj ) != $old_encpass ) {
+                [$old_Ynj, $old_encpass] = explode(':', $pass);
+                if( strtotime( $old_Ynj ) < $old_limit || md5( $xoopsUser->getVar('pass') . $old_Ynj ) !== $old_encpass ) {
                     $xoopsUser = false ;
                 }
             }
@@ -185,7 +193,7 @@ class CubeUtils_AutoLoginHack extends XCube_ActionFilter
             if (empty($xoopsUser)) {
                 $controller->executeHeader();
                 // Using User Module Context (This part is a little bit tricky)
-                $controller->setupModuleContext('user'); 
+                $controller->setupModuleContext('user');
                 // Using CubeUtil Module Context (This part is a little bit tricky)
                 $root->mLanguageManager->loadModuleMessageCatalog('cubeUtils');
                 $context =& $root->mContext;
@@ -196,18 +204,18 @@ class CubeUtils_AutoLoginHack extends XCube_ActionFilter
                 if (@isset($_COOKIE[$moduleConfig['usercookie']])) {
                     $renderTarget->setAttribute('usercookie', $_COOKIE[$moduleConfig['usercookie']]);
                 }
-                if (isset($_GET['xoops_redirect'])) {   
+                if (isset($_GET['xoops_redirect'])) {
                     $renderTarget->setAttribute('xoops_redirect', xoops_getrequest('xoops_redirect'));
                 }
                 $renderTarget->setAttribute('allow_register', $moduleConfig['allow_register']);
                 $controller->executeView();
                 exit(); //Should not return;
-            } else {
-                header('Location: '.XOOPS_URL . '/userinfo.php?uid='.$xoopsUser->getVar('uid'));
-                exit();
             }
-            break;
-            
+
+              header('Location: '.XOOPS_URL . '/userinfo.php?uid='.$xoopsUser->getVar('uid'));
+              exit();
+              break;
+
           case 'login':
             if (!empty($_POST['rememberme'])) {
                 $this->mRememberMe = 1;
@@ -218,11 +226,15 @@ class CubeUtils_AutoLoginHack extends XCube_ActionFilter
 
           case 'confirm':
             // 'confirm' action is special for autologin for security checking
-            if(!isset( $_SESSION['AUTOLOGIN_REQUEST_URI'])) exit ;
+            if(!isset( $_SESSION['AUTOLOGIN_REQUEST_URI'])) {
+                exit;
+            }
             // get URI
             $url = $_SESSION['AUTOLOGIN_REQUEST_URI'] ;
             unset($_SESSION['AUTOLOGIN_REQUEST_URI']) ;
-            if( preg_match('/javascript:/si', $url) ) exit ; // black list of url
+            if( preg_match('/javascript:/si', $url) ) {
+                exit;
+            } // black list of url
             $url4disp = preg_replace('/&amp;/i', '&', htmlspecialchars($url, ENT_QUOTES));
 
             if( isset( $_SESSION['AUTOLOGIN_POST'] ) ) {
@@ -251,13 +263,12 @@ class CubeUtils_AutoLoginHack extends XCube_ActionFilter
                 </html>
                 ' ;
                 exit ;
-            } else {
-                // For GET request, Do just redirecting
-                redirect_header($url4disp, 1, _TAKINGBACK);
-                exit();
             }
-            break;
+
+              // For GET request, Do just redirecting
+              redirect_header($url4disp, 1, _TAKINGBACK);
+              exit();
+              break;
         }
     }
 }
-?>

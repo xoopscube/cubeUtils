@@ -29,4 +29,4 @@ function b_cubeUtils_login_show($options) {
     }
     return false;
 }
-?>
+

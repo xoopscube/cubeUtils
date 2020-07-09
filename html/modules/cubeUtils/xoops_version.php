@@ -2,35 +2,26 @@
 /**
  *
  * @package CubeUtils
- * @version $Id: xoops_version.php 1294 2008-01-31 05:32:20Z nobunobu $
- * @copyright Copyright 2006-2008 NobuNobuXOOPS Project <http://sourceforge.net/projects/nobunobuxoops/>
+ * @version $Id: xoops_version.php 2020-05-27 15:10:28 gigamaster $
+ * @copyright Copyright 2006-2020
  * @author NobuNobu <nobunobu@nobunobu.com>
  * @license http://www.gnu.org/licenses/gpl.txt GNU GENERAL PUBLIC LICENSE Version 2
  *
  */
 
 if(!defined('XOOPS_ROOT_PATH')) exit ;
-$mydirname = basename(dirname( __FILE__ )) ;
+$mydirname = basename(__DIR__) ;
 
 $modversion['name'] = $mydirname;
-$modversion['version'] = '0.81';
+$modversion['version'] = '2.30';
 $modversion['description'] = 'XOOPS Cube 2.1.x Utilities';
-$modversion['credits'] = 'NobuNobu';
-$modversion['author'] = 'http://www.nobunobu.com/';
+$modversion['credits'] = 'NobuNobu. Updated to XOOPS Cube Project XCL 2.3.0 by gigamaster';
+$modversion['author'] = 'NobuNobu, http://www.nobunobu.com/';
 $modversion['help'] = 'index.html';
 $modversion['license'] = 'GPL';
 $modversion['official'] = 0;
-if (class_exists('XCube_Root')) {//ToDo: Detection of HD more elegant way
-  $root =& XCube_Root::getSingleton();
-  $controllerClass = strtolower(get_class($root->mController));
-  if ( $controllerClass === 'hdlegacy_controller' ) {
-    $modversion['image'] = 'images/cubeUtilsHD.png';
-  } else {
-    $modversion['image'] = 'images/cubeUtils.png';
-  }
-} else {
-  $modversion['image'] = 'images/cubeUtils.png';
-}
+$modversion['image'] = 'images/module_cubeutils.svg';
+
 $modversion['dirname'] = $mydirname;
 
 $modversion['cube_style'] = true;
@@ -93,4 +84,4 @@ $modversion['blocks'][4]['show_func'] = 'b_cubeUtils_whatsnew_show';
 $modversion['blocks'][4]['edit_func'] = 'b_cubeUtils_whatsnew_edit';
 $modversion['blocks'][4]['options'] = '5';
 $modversion['blocks'][4]['template'] = 'cubeUtils_block_whatsnew.html';
-?>
+

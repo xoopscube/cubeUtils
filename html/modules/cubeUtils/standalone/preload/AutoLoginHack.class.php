@@ -32,13 +32,17 @@ class AutoLoginHack extends XCube_ActionFilter
         $root->mDelegateManager->add('Legacypage.User.Access',  array(&$this, 'AccessToUser'), XCUBE_DELEGATE_PRIORITY_NORMAL-1);
 
         $this->mCookiePath = defined('XOOPS_COOKIE_PATH') ? XOOPS_COOKIE_PATH : preg_replace( '?http://[^/]+(/.*)$?' , '$1' , XOOPS_URL ) ;
-        if( $this->mCookiePath == XOOPS_URL ) $this->mCookiePath = '/' ;
+        if( $this->mCookiePath == XOOPS_URL ) {
+            $this->mCookiePath = '/';
+        }
         $GLOBALS['xoopsAutoLoginEnable'] = true;
     }
 
     /**
      * Custom 'Site.Login' Delegate functions for AutoLogin
-     *
+     * @param $principal
+     * @param $controller
+     * @param $context
      */
     function setupUser(&$principal, &$controller, &$context) {
         if (is_object($context->mXoopsUser)) {
@@ -51,7 +55,7 @@ class AutoLoginHack extends XCube_ActionFilter
             if (is_object($xoopsUser) && $xoopsUser->getVar('level') > 0) {
                 $root =& XCube_Root::getSingleton();
                 $context->mXoopsUser =& $xoopsUser;
-                // Regist to session
+                // Register to session
         		$root->mSession->regenerate();
                 $_SESSION['xoopsUserId'] = $xoopsUser->getVar('uid');
                 $_SESSION['xoopsUserGroups'] = $xoopsUser->getGroups();
@@ -63,19 +67,19 @@ class AutoLoginHack extends XCube_ActionFilter
                 if ($context->mXoopsUser->isAdmin(-1)) {
                     $roles[] = "Site.Administrator";
                 }
-                if (in_array(XOOPS_GROUP_ADMIN, $_SESSION['xoopsUserGroups'])) {
+                if (in_array(XOOPS_GROUP_ADMIN, $_SESSION['xoopsUserGroups'], true)) {
                     $roles[] = "Site.Owner";
                 }
 
                 $identity = new Legacy_Identity($context->mXoopsUser);
                 $principal = new Legacy_GenericPrincipal($identity, $roles);
-        
+
                 //
                 // Use 'mysession'
                 //
                 $xoopsConfig = $root->mContext->mXoopsConfig;
-        
-                if ($xoopsConfig['use_mysession'] && $xoopsConfig['session_name'] != '') {
+
+                if ($xoopsConfig['use_mysession'] && $xoopsConfig['session_name'] !== '') {
                     setcookie($xoopsConfig['session_name'], session_id(), time() + (60 * $xoopsConfig['session_expire']), '/', '', 0);
                 }
                 // Raise Site.CheckLogin.Success event
@@ -83,7 +87,9 @@ class AutoLoginHack extends XCube_ActionFilter
             } else { //Invalid AutoLogin
                 setcookie('autologin_uname', '', time() - 3600, $this->mCookiePath, '', 0);
                 setcookie('autologin_pass', '', time() - 3600, $this->mCookiePath, '', 0);
-                if (is_object($xoopsUser)) $xoopsUser = false;
+                if (is_object($xoopsUser)) {
+                    $xoopsUser = false;
+                }
             }
         }
     }
@@ -92,14 +98,14 @@ class AutoLoginHack extends XCube_ActionFilter
             $root =& XCube_Root::getSingleton();
             $controller = $root->mController;
             //Check Cookies for AutoLogin
-            if(isset($_COOKIE['autologin_uname']) && isset($_COOKIE['autologin_pass'])) {
+            if(isset($_COOKIE['autologin_uname'], $_COOKIE['autologin_pass'])) {
                 //Forwarding to confirmation sequence, if request with POST or GET paramaters.
                 $confirm_url = '/user.php';
                 if(!empty( $_POST)) {
                     $_SESSION['AUTOLOGIN_POST'] = $_POST ;
                     $_SESSION['AUTOLOGIN_REQUEST_URI'] = $_SERVER['REQUEST_URI'] ;
                     $controller->executeForward(XOOPS_URL.$confirm_url.'?op=confirm');
-                } else if(!empty($_SERVER['QUERY_STRING']) && substr($_SERVER['SCRIPT_NAME'], -strlen($confirm_url)) != $confirm_url) {
+                } else if(!empty($_SERVER['QUERY_STRING']) && substr($_SERVER['SCRIPT_NAME'], -strlen($confirm_url)) !== $confirm_url) {
                     $_SESSION['AUTOLOGIN_REQUEST_URI'] = $_SERVER['REQUEST_URI'] ;
                     $controller->executeForward(XOOPS_URL.$confirm_url.'?op=confirm');
                 }
@@ -112,14 +118,14 @@ class AutoLoginHack extends XCube_ActionFilter
                 $criteria = new CriteriaCompo(new Criteria('uname', addslashes($uname)));
                 $user_handler =& xoops_gethandler('user');
                 $users =& $user_handler->getObjects($criteria, false);
-                if( empty( $users ) || count( $users ) != 1 ) {
+                if( empty( $users ) || count( $users ) !== 1 ) {
                 $xoopsUser = null ;
                 } else {
                 $xoopsUser = $users[0];
                     //Check Cookie LifeTime;
                     $old_limit = time() - $this->mLifeTime ;
-                    list( $old_Ynj , $old_encpass ) = explode( ':' , $pass ) ;
-                    if( strtotime( $old_Ynj ) < $old_limit || md5( $xoopsUser->getVar('pass') . $old_Ynj ) != $old_encpass ) {
+                    [$old_Ynj, $old_encpass] = explode(':', $pass);
+                    if( strtotime( $old_Ynj ) < $old_limit || md5( $xoopsUser->getVar('pass') . $old_Ynj ) !== $old_encpass ) {
                         $xoopsUser = false ;
                     }
                 }
@@ -182,11 +188,15 @@ class AutoLoginHack extends XCube_ActionFilter
 
           case 'confirm':
             // 'confirm' action is special for autologin for security checking
-            if(!isset( $_SESSION['AUTOLOGIN_REQUEST_URI'])) exit ;
+            if(!isset( $_SESSION['AUTOLOGIN_REQUEST_URI'])) {
+                exit;
+            }
             // get URI
             $url = $_SESSION['AUTOLOGIN_REQUEST_URI'] ;
             unset($_SESSION['AUTOLOGIN_REQUEST_URI']) ;
-            if( preg_match('/javascript:/si', $url) ) exit ; // black list of url
+            if( preg_match('/javascript:/si', $url) ) {
+                exit;
+            } // black list of url
             $url4disp = preg_replace('/&amp;/i', '&', htmlspecialchars($url, ENT_QUOTES));
 
             if( isset( $_SESSION['AUTOLOGIN_POST'] ) ) {
@@ -215,13 +225,12 @@ class AutoLoginHack extends XCube_ActionFilter
                 </html>
                 ' ;
                 exit ;
-            } else {
-                // For GET request, Do just redirecting
-                redirect_header($url4disp, 1, _TAKINGBACK);
-                exit();
             }
-            break;
+
+            // For GET request, Do just redirecting
+              redirect_header($url4disp, 1, _TAKINGBACK);
+              exit();
+              break;
         }
     }
 }
-?>

@@ -23,10 +23,10 @@ function b_cubeUtils_igoogle_edit($options) {
 }
 
 function b_cubeUtils_igoogle_show($options) {
-    require_once dirname(dirname(__FILE__)).'/include/blockFunc.inc.php';
-    $bid = intval($options[0]);
+    require_once dirname(__FILE__, 2) .'/include/blockFunc.inc.php';
+    $bid = (int)$options[0];
     $result = cubeUtils_GetBlock($bid);
     $result['bid'] = $bid;
     return $result;
 }
-?>
+

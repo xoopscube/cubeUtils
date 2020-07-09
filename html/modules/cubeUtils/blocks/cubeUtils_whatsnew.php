@@ -9,7 +9,7 @@
  *
  */
 function b_cubeUtils_whatsnew_edit($options) {
-    return _MB_CUBE_UTILS_NUMOFCONTENT.' : <input type="text" name="options[0]" value="'.intval($options[0]).'" />';
+    return _MB_CUBE_UTILS_NUMOFCONTENT.' : <input type="text" name="options[0]" value="'. (int)$options[0] .'" />';
 }
 
 function b_cubeUtils_whatsnew_show($options) {
@@ -24,7 +24,7 @@ function b_cubeUtils_whatsnew_show($options) {
     $sortArr = array();
     $n = 0;
     foreach ($items as $item) {
-        $i = intval($item['pubdate']);
+        $i = (int)$item['pubdate'];
         for (; isset($sortArr[$i]) ; $i++);
         $sortArr[$i] = $item;
     }
@@ -32,4 +32,4 @@ function b_cubeUtils_whatsnew_show($options) {
     $result['items'] = array_slice($sortArr,0,$max_item);
     return $result;
 }
-?>
+

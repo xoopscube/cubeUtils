@@ -57,4 +57,4 @@ if (restore) selObj.selectedIndex=0;
 
     return $block;
 }
-?>
+

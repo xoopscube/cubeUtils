@@ -1,12 +1,14 @@
 <?php
 /**
  *
+ * @param $bid
+ * @param bool $useCache
+ * @return bool
+ * @author NobuNobu <nobunobu@nobunobu.com>
+ * @license http://www.gnu.org/licenses/gpl.txt GNU GENERAL PUBLIC LICENSE Version 2
  * @package CubeUtils
  * @version $Id: xoops_version.php 1294 2008-01-31 05:32:20Z nobunobu $
  * @copyright Copyright 2006-2008 NobuNobuXOOPS Project <http://sourceforge.net/projects/nobunobuxoops/>
- * @author NobuNobu <nobunobu@nobunobu.com>
- * @license http://www.gnu.org/licenses/gpl.txt GNU GENERAL PUBLIC LICENSE Version 2
- *
  */
 function cubeUtils_GetBlock($bid, $useCache=true) {
     $blockHandler =& xoops_gethandler('block');
@@ -20,22 +22,20 @@ function cubeUtils_GetBlock($bid, $useCache=true) {
 
         $usedCacheFlag = false;
         $cacheInfo = null;
-        
-        if ($useCache) {
-            if ($controller->isEnableCacheFeature() && $blockProcedure->isEnableCache()) {
-                $cacheInfo =& $blockProcedure->createCacheInfo();
-                
-                $controller->mSetBlockCachePolicy->call(new XCube_Ref($cacheInfo));
-                $filepath = $cacheInfo->getCacheFilePath();
-                
-                if ($cacheInfo->isEnableCache() && $controller->existActiveCacheFile($filepath, $blockProcedure->getCacheTime())) {
-                    $content = $controller->loadCache($filepath);
-                    if ($blockProcedure->isDisplay() && !empty($content)) {
-                        $block['content'] = $content;
-                    }
-                        
-                    $usedCacheFlag = true;
+
+        if ($useCache && $controller->isEnableCacheFeature() && $blockProcedure->isEnableCache()) {
+            $cacheInfo =& $blockProcedure->createCacheInfo();
+
+            $controller->mSetBlockCachePolicy->call(new XCube_Ref($cacheInfo));
+            $filepath = $cacheInfo->getCacheFilePath();
+
+            if ($cacheInfo->isEnableCache() && $controller->existActiveCacheFile($filepath, $blockProcedure->getCacheTime())) {
+                $content = $controller->loadCache($filepath);
+                if ($blockProcedure->isDisplay() && !empty($content)) {
+                    $block['content'] = $content;
                 }
+
+                $usedCacheFlag = true;
             }
         }
 
@@ -59,4 +59,4 @@ function cubeUtils_GetBlock($bid, $useCache=true) {
     }
     return $block;
 }
-?>
+
