@@ -1,19 +1,22 @@
 <?php
 /**
- *
- * @package CubeUtils
- * @version $Id: xoops_version.php 1294 2008-01-31 05:32:20Z nobunobu $
- * @copyright Copyright 2006-2008 NobuNobuXOOPS Project <http://sourceforge.net/projects/nobunobuxoops/>
- * @author NobuNobu <nobunobu@nobunobu.com>
- * @license http://www.gnu.org/licenses/gpl.txt GNU GENERAL PUBLIC LICENSE Version 2
- *
+ * @package    CubeUtils
+ * @version    2.3
+ * @author     Gigamaster, 2020 XCL PHP7
+ * @author     NobuNobu, 2008-01-31  <nobunobu@nobunobu.com>
+ * @copyright  Copyright 2006-2021 NobuNobu - XOOPS Cube Project
+ * @license    Legacy https://github.com/xoopscube/xcl/blob/master/GPL_V2.txt
+ * @license    Cube : https://github.com/xoopscube/xcl/blob/master/BSD_license.txt
  */
+
 include_once(XOOPS_ROOT_PATH.'/class/xoopslists.php');
+
 if (file_exists(XOOPS_ROOT_PATH.'/modules/cubeUtils/include/conf_ml.php')) {
     require_once XOOPS_ROOT_PATH.'/modules/cubeUtils/include/conf_ml.php';
 } else {
     require_once XOOPS_ROOT_PATH.'/modules/cubeUtils/include/conf_ml.dist.php';
 }
+
 function b_cubeUtils_langsel_show($options) {
     if (empty($_SERVER['QUERY_STRING'])) {
         $pagenquery = $_SERVER['PHP_SELF'].'?'.CUBE_UTILS_ML_PARAM_NAME.'=';

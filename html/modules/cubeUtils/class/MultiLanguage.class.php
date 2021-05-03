@@ -1,17 +1,15 @@
 <?php
 /**
- *
- * @package CubeUtils
- * @version $Id: xoops_version.php 1294 2008-01-31 05:32:20Z nobunobu $
- * @copyright Copyright 2006-2008 NobuNobuXOOPS Project <http://sourceforge.net/projects/nobunobuxoops/>
- * @author NobuNobu <nobunobu@nobunobu.com>
- * @license http://www.gnu.org/licenses/gpl.txt GNU GENERAL PUBLIC LICENSE Version 2
- *
- * Multi Language Enabler Action Filter
- *
+ * @package    CubeUtils
+ * @version    2.3
+ * @author     Gigamaster, 2020 XCL PHP7
+ * @author     NobuNobu, 2008-01-31  <nobunobu@nobunobu.com>
+ * @copyright  Copyright 2006-2021 NobuNobu - XOOPS Cube Project
+ * @license    Legacy https://github.com/xoopscube/xcl/blob/master/GPL_V2.txt
+ * @license    Cube : https://github.com/xoopscube/xcl/blob/master/BSD_license.txt
+ * @brief      Multi Language Enabler Action Filter
  * Following Multi Language is based on "EMLH(The Easiest Multi-Language Hack) for XOOPS 2.0.x" by GIJOE
  *   (http://www.peak.ne.jp/xoops/)
- *
  */
 
 if (!defined('XOOPS_ROOT_PATH')) exit();
@@ -39,7 +37,7 @@ if (!class_exists('CubeUtil_MultiLanguage')) {
 
         function __construct()
         {
-            $this->mCookiePath = defined('XOOPS_COOKIE_PATH') ? XOOPS_COOKIE_PATH : preg_replace( '?http://[^/]+(/.*)$?' , '$1' , XOOPS_URL ) ;
+            $this->mCookiePath = defined('XOOPS_COOKIE_PATH') ? XOOPS_COOKIE_PATH : preg_replace( '?https://[^/]+(/.*)$?', '$1' , XOOPS_URL ) ;
             if( $this->mCookiePath == XOOPS_URL ) {
                 $this->mCookiePath = '/';
             }

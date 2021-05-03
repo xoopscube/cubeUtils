@@ -15,4 +15,3 @@ define('_MI_CUBE_UTILS_DESC_INSTALLER1', 'XOOPS Cube 2.1のシステムユーテ
 define('_MI_CUBE_UTILS_DESC_INSTALLER2', '現在は、以下の機能が提供されています。');
 define('_MI_CUBE_UTILS_DESC_INSTALLER3', '・AutoLogin');
 define('_MI_CUBE_UTILS_DESC_INSTALLER4', '・言語切替');
-?>

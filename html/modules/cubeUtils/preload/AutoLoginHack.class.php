@@ -1,11 +1,12 @@
 <?php
 /**
- *
- * @package CubeUtils
- * @version $Id: xoops_version.php 1294 2008-01-31 05:32:20Z nobunobu $
- * @copyright Copyright 2006-2008 NobuNobuXOOPS Project <http://sourceforge.net/projects/nobunobuxoops/>
- * @author NobuNobu <nobunobu@nobunobu.com>
- * @license http://www.gnu.org/licenses/gpl.txt GNU GENERAL PUBLIC LICENSE Version 2
+ * @package    CubeUtils
+ * @version    2.3
+ * @author     Gigamaster, 2020 XCL PHP7
+ * @author     NobuNobu, 2008-01-31  <nobunobu@nobunobu.com>
+ * @copyright  Copyright 2006-2021 NobuNobu - XOOPS Cube Project
+ * @license    Legacy https://github.com/xoopscube/xcl/blob/master/GPL_V2.txt
+ * @license    Cube : https://github.com/xoopscube/xcl/blob/master/BSD_license.txt
  *
  * XOOPS Cube 2.1 Autologin Class (Module Preload Version)
  *
